@@ -1,5 +1,6 @@
 import pickle
 import errno
+import json
 
 
 class Product(object):
@@ -9,29 +10,28 @@ class Product(object):
 		self.name = name
 		self.price = price
 
-		product_data = {'code' : self.code,
-						'name' : self.name,
-						'price' : self.price}
+		product_data = {
+										'code' : self.code,
+										'name' : self.name,
+										'price' : self.price}
 
-		pickle_file = open('product.pkl', 'wb')
-
-		pickle.dump(product_data, pickle_file)
-
-		pickle_file.close()
+		with open('products.json', 'r+') as products_file:
+			products = json.load(products_file)
+			products['products'].append(product_data)
+			
+			products_file.seek(0)
+			json.dump(products, products_file)
+			products_file.truncate()
 
 
 	def update_product(self, code, name=None, price=None):
 		pass
 
 
-	def get_product(self, code=None):
-		pickle_file = open('product.pkl', 'rb')
-
-		pickle_data = pickle.load(pickle_file)
-
-		print(pickle_data)
-
-		pickle_file.close()
+	def get_products(self, code=None):
+		with open('products.json', 'r') as products_file:
+			products = json.load(products_file)
+			print(products)
 
 
 class Discount(object):
@@ -57,25 +57,25 @@ class Discount(object):
 							'to_quantity' : self.to_quantity,
 							'amount' : self.amount}
 
-		pickle_file = open('discount.pkl', 'wb')
-
-		pickle.dump(discount_data, pickle_file)
-
-		pickle_file.close()
+		with open('discounts.json', 'r+') as discounts_file:
+			discounts = json.load(discounts_file)
+			discounts['discounts'].append(discount_data)
+			
+			discounts_file.seek(0)
+			json.dump(discounts, discounts_file)
+			discounts_file.truncate()
 
 
 	def update_discount(self):
 		pass
 
 
-	def get_discount(self, code=None):
-		pickle_file = open('discount.pkl', 'rb')
+	def get_discounts(self, from_product=None, from_quantity=None, 
+						to_product=None, to_quantity=None):
+		with open('discounts.json', 'r') as discounts_file:
+			discounts = json.load(discounts_file)
+			print(discounts)
 
-		pickle_data = pickle.load(pickle_file)
-
-		print(pickle_data)
-
-		pickle_file.close()
 
 class BasketItem(object):
 
@@ -84,40 +84,41 @@ class BasketItem(object):
 		self.discount_code = discount_code
 		self.amount = amount
 
-		basket_item_data = {'product_code' : self.product_code,
+		basketitem_data = {'product_code' : self.product_code,
 							'discount_code' : self.discount_code,
 							'amount' : self.amount}
 
-		pickle_file = open('basket_item.pkl', 'wb')
-
-		pickle.dump(basket_item_data, pickle_file)
-
-		pickle_file.close()
+		with open('basketitems.json', 'r+') as basketitems_file:
+			basketitems = json.load(products_file)
+			basketitems['basketitems'].append(basketitem_data)
+			
+			basketitems_file.seek(0)
+			json.dump(basketitems, basketitems_file)
+			basketitems_file.truncate()
 
 
 	def update_basket_item(self):
 		pass
 
 
-	def get_basket_item(self):
-		try:
-			pickle_file = open('basket_item.pkl', 'rb')
-
-			pickle_data = pickle.load(pickle_file)
-
-			print(pickle_data)
-
-			pickle_file.close()
-		except IOError,e:
-			if e[0] == errno.ENOENT:
-				print("No Basket Items")
-			else:
-				raise
+	def get_basket_items(self, product=None):
+		with open('basketitems.json', 'r') as basketitems_file:
+			basketitems = json.load(basketitems_file)
+			print(basketitems)
 
 
 def add_product_to_basket(product_code):
-	product = Product(product_code)
-	product = BasketItem(product_code=product_code, )
+	product = Product()
+	discount = Discount()
+	basketitem = BasketItem()
+
+	product_to_add = product.get_products(product_code)
+
+	basket_items = basketitem.get_basket_items()
+	discounts = get_discounts()
+
+
+	
 
 
 if __name__ == "__main__":
@@ -127,7 +128,7 @@ if __name__ == "__main__":
 
 	# basket_item.add_basket_item()
 
-	basket_item.get_basket_item()
+	basketitem.get_basket_items()
 
 	action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
 
@@ -139,4 +140,4 @@ if __name__ == "__main__":
 		# product = Product(code, name, price)
 		product.add_product(code, name, price)
 
-		product.get_product()
+		product.get_products()
