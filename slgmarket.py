@@ -19,22 +19,24 @@ class Product(object):
 
 		pickle_file.close()
 
-	def update_product(self):
+
+	def update_product(self, code, name=None, price=None):
 		pass
+
 
 	def get_product(self, code=None):
 		pickle_file = open('product.pkl', 'rb')
 
 		pickle_data = pickle.load(pickle_file)
 
-		print(pickle_file)
+		print(pickle_data)
 
 		pickle_file.close()
 
 
 class Discount(object):
 
-	def __init__(self, code, description, limit=None, 
+	def add_discount(self, code, description, limit=None, 
 					from_product=None, from_quantity=None, 
 					to_product=None, to_quantity=None, amount=None):
 		self.code = code
@@ -46,7 +48,6 @@ class Discount(object):
 		self.to_quantity = to_quantity
 		self.amount = amount
 
-	def add_discount(self):
 		discount_data = {'code' : self.code,
 							'description' : self.description,
 							'limit' : self.limit,
@@ -62,26 +63,27 @@ class Discount(object):
 
 		pickle_file.close()
 
+
 	def update_discount(self):
 		pass
+
 
 	def get_discount(self, code=None):
 		pickle_file = open('discount.pkl', 'rb')
 
 		pickle_data = pickle.load(pickle_file)
 
-		print(pickle_file)
+		print(pickle_data)
 
 		pickle_file.close()
 
 class BasketItem(object):
 
-	def __init__(self, product_code=None, discount_code=None, amount=None):
+	def add_basket_item(self, product_code=None, discount_code=None, amount=None):
 		self.product_code = product_code
 		self.discount_code = discount_code
 		self.amount = amount
 
-	def add_basket_item(self):
 		basket_item_data = {'product_code' : self.product_code,
 							'discount_code' : self.discount_code,
 							'amount' : self.amount}
@@ -92,8 +94,10 @@ class BasketItem(object):
 
 		pickle_file.close()
 
+
 	def update_basket_item(self):
 		pass
+
 
 	def get_basket_item(self):
 		try:
@@ -101,7 +105,7 @@ class BasketItem(object):
 
 			pickle_data = pickle.load(pickle_file)
 
-			print(pickle_file)
+			print(pickle_data)
 
 			pickle_file.close()
 		except IOError,e:
@@ -117,7 +121,9 @@ def add_product_to_basket(product_code):
 
 
 if __name__ == "__main__":
-	basket_item = BasketItem()
+	product = Product()
+	discount = Discount()
+	basketitem = BasketItem()
 
 	# basket_item.add_basket_item()
 
@@ -131,8 +137,6 @@ if __name__ == "__main__":
 		price = raw_input("Enter the Product Price: ")
 
 		# product = Product(code, name, price)
-		product = Product()
-
 		product.add_product(code, name, price)
 
 		product.get_product()
