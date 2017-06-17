@@ -1,15 +1,14 @@
 import pickle
+import errno
 
 
 class Product(object):
 
-	def __init__(self, code, name, price):
+	def add_product(self, code, name, price):
 		self.code = code
 		self.name = name
 		self.price = price
 
-
-	def add_product(self):
 		product_data = {'code' : self.code,
 						'name' : self.name,
 						'price' : self.price}
@@ -75,8 +74,55 @@ class Discount(object):
 
 		pickle_file.close()
 
+class BasketItem(object):
+
+	def __init__(self, product_code=None, discount_code=None, amount=None):
+		self.product_code = product_code
+		self.discount_code = discount_code
+		self.amount = amount
+
+	def add_basket_item(self):
+		basket_item_data = {'product_code' : self.product_code,
+							'discount_code' : self.discount_code,
+							'amount' : self.amount}
+
+		pickle_file = open('basket_item.pkl', 'wb')
+
+		pickle.dump(basket_item_data, pickle_file)
+
+		pickle_file.close()
+
+	def update_basket_item(self):
+		pass
+
+	def get_basket_item(self):
+		try:
+			pickle_file = open('basket_item.pkl', 'rb')
+
+			pickle_data = pickle.load(pickle_file)
+
+			print(pickle_file)
+
+			pickle_file.close()
+		except IOError,e:
+			if e[0] == errno.ENOENT:
+				print("No Basket Items")
+			else:
+				raise
+
+
+def add_product_to_basket(product_code):
+	product = Product(product_code)
+	product = BasketItem(product_code=product_code, )
+
 
 if __name__ == "__main__":
+	basket_item = BasketItem()
+
+	# basket_item.add_basket_item()
+
+	basket_item.get_basket_item()
+
 	action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
 
 	if action == "Add Product":
@@ -84,8 +130,9 @@ if __name__ == "__main__":
 		name = raw_input("Enter the Product Name: ")
 		price = raw_input("Enter the Product Price: ")
 
-		product = Product(code, name, price)
+		# product = Product(code, name, price)
+		product = Product()
 
-		product.add_product()
+		product.add_product(code, name, price)
 
 		product.get_product()

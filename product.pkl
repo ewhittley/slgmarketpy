@@ -1,14 +1,14 @@
 (dp0
 S'price'
 p1
-S'3.11'
+S'6'
 p2
 sS'code'
 p3
-S'CH1'
+S'AP1'
 p4
 sS'name'
 p5
-S'Chai'
+S'Apple'
 p6
 s.
