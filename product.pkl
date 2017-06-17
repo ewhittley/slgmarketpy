@@ -1,0 +1,14 @@
+(dp0
+S'price'
+p1
+S'3.11'
+p2
+sS'code'
+p3
+S'CH1'
+p4
+sS'name'
+p5
+S'Chai'
+p6
+s.
