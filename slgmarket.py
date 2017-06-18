@@ -1,7 +1,6 @@
-import pickle
 import errno
 import json
-import simplejson
+import json_helper
 
 
 class Product(object):
@@ -17,13 +16,7 @@ class Product(object):
 						'price' : self.price
 						}
 
-		with open('products.json', 'r+') as products_file:
-			products = json.load(products_file)
-			products['products'].append(product_data)
-			
-			products_file.seek(0)
-			json.dump(products, products_file)
-			products_file.truncate()
+		json_helper.write_list('products.json', 'products', product_data)
 
 
 	def update_product(self, code, name=None, price=None):
@@ -67,13 +60,7 @@ class Discount(object):
 							'amount' : self.amount
 							}
 
-		with open('discounts.json', 'r+') as discounts_file:
-			discounts = json.load(discounts_file)
-			discounts['discounts'].append(discount_data)
-			
-			discounts_file.seek(0)
-			json.dump(discounts, discounts_file)
-			discounts_file.truncate()
+		json_helper.write_list('discounts.json', 'discounts', discount_data)
 
 
 	def update_discount(self):
@@ -101,13 +88,7 @@ class BasketItem(object):
 							'amount' : self.amount
 							}
 
-		with open('basketitems.json', 'r+') as basketitems_file:
-			basketitems = json.load(basketitems_file)
-			basketitems['basketitems'].append(basketitem_data)
-			
-			basketitems_file.seek(0)
-			json.dump(basketitems, basketitems_file)
-			basketitems_file.truncate()
+		json_helper.write_list('basketitems.json', 'basketitems', basketitem_data)
 
 
 	def update_basket_item(self):
@@ -140,14 +121,11 @@ def add_product_to_basket(product_code):
 	product_to_add = product.get_products(product_code)
 
 	print(product_to_add)
-	print(product_to_add['price'])
 
 	basketitem.add_basket_item(product_to_add['code'], None, product_to_add['price'])
 
 	# basket_items = basketitem.get_basket_items()
 	# discounts = get_discounts()
-
-
 
 
 if __name__ == "__main__":
