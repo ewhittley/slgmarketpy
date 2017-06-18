@@ -24,15 +24,9 @@ class Product(object):
 
 
 	def get_products(self, code=None):
-		with open('products.json', 'r') as products_file:
-			products = json.load(products_file)
+		products = json_helper.get_list('products.json', 'code', code)
 
-			if code is not None:
-				for product in products.values()[0]:
-					if product['code'] == code:
-						return product
-			else:
-				print(products)
+		return products
 
 
 class Discount(object):
@@ -71,25 +65,24 @@ class Discount(object):
 		with open('discounts.json', 'r') as discounts_file:
 			discounts = json.load(discounts_file)
 
+			from_discount = []
+			to_discount = []
+
 			if product_code is not None:
 				for discount in discounts.values()[0]:
 					if discount['from_product'] == product_code:
-						from_discount = discount
-					else:
-						from_discount = None
+						from_discount.append(discount)
 					if discount['to_product'] == product_code:
-						to_discount = discount
-					else:
-						to_discount = None
+						to_discount.append(discount)
 
 				# need to handle duplicate returns on discounts.
 				# example: BOGO
 				if from_discount == to_discount:
 					return from_discount
 				else:
-					if from_discount is not None:
+					if from_discount:
 						return from_discount
-					elif to_discount is not None:
+					elif to_discount:
 						return to_discount
 			else:
 				print(discounts)
@@ -117,12 +110,9 @@ class BasketItem(object):
 
 
 	def get_basket_items(self, product=None):
-		try:
-			with open('basketitems.json', 'r') as basketitems_file:
-				basketitems = json.load(basketitems_file)
-				print(basketitems)
-		except ValueError, e:
-			print("No Basket Items")
+		basket_items = json_helper.get_list('basketitems.json')
+
+		return basket_items
 
 	def destroy_basket_items(self, product=None):
 		with open('basketitems.json', 'r+') as basketitems_file:
@@ -140,12 +130,11 @@ def add_product_to_basket(product_code):
 	basketitem = BasketItem()
 
 	product_to_add = product.get_products(product_code)
-
 	print("Adding to basket: {product}".format(product=product_to_add))
 
 	basketitem.add_basket_item(product_to_add['code'], None, product_to_add['price'])
 
-	discount_to_add = discount.get_discounts(product_to_add)
+	discount_to_add = discount.get_discounts(product_to_add['code'])
 	print("Adding Discount: {discount}".format(discount=discount_to_add))
 
 	# basket_items = basketitem.get_basket_items()
@@ -157,8 +146,6 @@ if __name__ == "__main__":
 	discount = Discount()
 	basketitem = BasketItem()
 
-	basketitem.get_basket_items()
-
 	while True:
 		action = raw_input("Type add.basket(CODE) or add.product or stop: ")
 		if action == 'stop':
@@ -167,7 +154,8 @@ if __name__ == "__main__":
 		elif action == 'add.basket':
 			add_product_to_basket('AP1')
 
-			basketitem.get_basket_items()
+			basket_items = basketitem.get_basket_items()
+			print("Basket Items: {basket_items}".format(basket_items=basket_items))
 		elif action == 'add.product':
 			product.add_product(code, name, price)
 
