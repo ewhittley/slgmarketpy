@@ -67,11 +67,32 @@ class Discount(object):
 		pass
 
 
-	def get_discounts(self, from_product=None, from_quantity=None, 
-						to_product=None, to_quantity=None):
+	def get_discounts(self, product_code=None):
 		with open('discounts.json', 'r') as discounts_file:
 			discounts = json.load(discounts_file)
-			print(discounts)
+
+			if product_code is not None:
+				for discount in discounts.values()[0]:
+					if discount['from_product'] == product_code:
+						from_discount = discount
+					else:
+						from_discount = None
+					if discount['to_product'] == product_code:
+						to_discount = discount
+					else:
+						to_discount = None
+
+				# need to handle duplicate returns on discounts.
+				# example: BOGO
+				if from_discount == to_discount:
+					return from_discount
+				else:
+					if from_discount is not None:
+						return from_discount
+					elif to_discount is not None:
+						return to_discount
+			else:
+				print(discounts)
 
 
 class BasketItem(object):
@@ -120,9 +141,12 @@ def add_product_to_basket(product_code):
 
 	product_to_add = product.get_products(product_code)
 
-	print(product_to_add)
+	print("Adding to basket: {product}".format(product=product_to_add))
 
 	basketitem.add_basket_item(product_to_add['code'], None, product_to_add['price'])
+
+	discount_to_add = discount.get_discounts(product_to_add)
+	print("Adding Discount: {discount}".format(discount=discount_to_add))
 
 	# basket_items = basketitem.get_basket_items()
 	# discounts = get_discounts()
@@ -133,13 +157,7 @@ if __name__ == "__main__":
 	discount = Discount()
 	basketitem = BasketItem()
 
-	# basket_item.add_basket_item()
-
 	basketitem.get_basket_items()
-
-	# product.get_products('CH1')
-
-	# add_product_to_basket('AP1')
 
 	while True:
 		action = raw_input("Type add.basket(CODE) or add.product or stop: ")
@@ -156,15 +174,3 @@ if __name__ == "__main__":
 			product.get_products()
 		else:
 			print("That action is not valid.")
-
-	"""action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
-
-	if action == "Add Product":
-		code = raw_input("Enter the Product Code: ")
-		name = raw_input("Enter the Product Name: ")
-		price = raw_input("Enter the Product Price: ")
-
-		# product = Product(code, name, price)
-		product.add_product(code, name, price)
-
-		product.get_products('CH1')"""
