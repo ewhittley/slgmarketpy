@@ -1,6 +1,7 @@
 import pickle
 import errno
 import json
+import simplejson
 
 
 class Product(object):
@@ -11,9 +12,10 @@ class Product(object):
 		self.price = price
 
 		product_data = {
-										'code' : self.code,
-										'name' : self.name,
-										'price' : self.price}
+						'code' : self.code,
+						'name' : self.name,
+						'price' : self.price
+						}
 
 		with open('products.json', 'r+') as products_file:
 			products = json.load(products_file)
@@ -31,7 +33,13 @@ class Product(object):
 	def get_products(self, code=None):
 		with open('products.json', 'r') as products_file:
 			products = json.load(products_file)
-			print(products)
+
+			if code is not None:
+				for product in products.values()[0]:
+					if product['code'] == code:
+						return product
+			else:
+				print(products)
 
 
 class Discount(object):
@@ -48,14 +56,16 @@ class Discount(object):
 		self.to_quantity = to_quantity
 		self.amount = amount
 
-		discount_data = {'code' : self.code,
+		discount_data = {
+							'code' : self.code,
 							'description' : self.description,
 							'limit' : self.limit,
 							'from_product' : self.from_product,
 							'from_quantity' : self.from_quantity,
 							'to_product' : self.to_product,
 							'to_quantity' : self.to_quantity,
-							'amount' : self.amount}
+							'amount' : self.amount
+							}
 
 		with open('discounts.json', 'r+') as discounts_file:
 			discounts = json.load(discounts_file)
@@ -79,17 +89,20 @@ class Discount(object):
 
 class BasketItem(object):
 
-	def add_basket_item(self, product_code=None, discount_code=None, amount=None):
+	def add_basket_item(self, product_code=None, 
+						discount_code=None, amount=None):
 		self.product_code = product_code
 		self.discount_code = discount_code
 		self.amount = amount
 
-		basketitem_data = {'product_code' : self.product_code,
+		basketitem_data = {
+							'product_code' : self.product_code,
 							'discount_code' : self.discount_code,
-							'amount' : self.amount}
+							'amount' : self.amount
+							}
 
 		with open('basketitems.json', 'r+') as basketitems_file:
-			basketitems = json.load(products_file)
+			basketitems = json.load(basketitems_file)
 			basketitems['basketitems'].append(basketitem_data)
 			
 			basketitems_file.seek(0)
@@ -102,9 +115,12 @@ class BasketItem(object):
 
 
 	def get_basket_items(self, product=None):
-		with open('basketitems.json', 'r') as basketitems_file:
-			basketitems = json.load(basketitems_file)
-			print(basketitems)
+		try:
+			with open('basketitems.json', 'r') as basketitems_file:
+				basketitems = json.load(basketitems_file)
+				print(basketitems)
+		except ValueError, e:
+			print("No Basket Items")
 
 
 def add_product_to_basket(product_code):
@@ -114,11 +130,15 @@ def add_product_to_basket(product_code):
 
 	product_to_add = product.get_products(product_code)
 
-	basket_items = basketitem.get_basket_items()
-	discounts = get_discounts()
+	print(product_to_add)
+	print(product_to_add['price'])
+
+	basketitem.add_basket_item(product_to_add['code'], None, product_to_add['price'])
+
+	# basket_items = basketitem.get_basket_items()
+	# discounts = get_discounts()
 
 
-	
 
 
 if __name__ == "__main__":
@@ -130,7 +150,11 @@ if __name__ == "__main__":
 
 	basketitem.get_basket_items()
 
-	action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
+	# product.get_products('CH1')
+
+	add_product_to_basket('AP1')
+
+	"""action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
 
 	if action == "Add Product":
 		code = raw_input("Enter the Product Code: ")
@@ -140,4 +164,4 @@ if __name__ == "__main__":
 		# product = Product(code, name, price)
 		product.add_product(code, name, price)
 
-		product.get_products()
+		product.get_products('CH1')"""
