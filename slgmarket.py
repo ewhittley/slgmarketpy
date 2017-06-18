@@ -146,18 +146,29 @@ if __name__ == "__main__":
 	discount = Discount()
 	basketitem = BasketItem()
 
+	help_message = "COMMANDS: \n- basket.add\n- product.add\n- help\n- stop"
+	print(help_message)
+
 	while True:
-		action = raw_input("Type add.basket(CODE) or add.product or stop: ")
+		action = raw_input("action: ")
 		if action == 'stop':
 			basketitem.destroy_basket_items()
 			break
-		elif action == 'add.basket':
-			add_product_to_basket('AP1')
+		elif action == 'help':
+			print(help_message)
+		elif "basket.add" in action:
+			product_code = raw_input("Enter the Product Code to scan: ")
+			
+			add_product_to_basket(product_code)
 
 			basket_items = basketitem.get_basket_items()
 			print("Basket Items: {basket_items}".format(basket_items=basket_items))
-		elif action == 'add.product':
-			product.add_product(code, name, price)
+		elif "product.add" in action:
+			product_code = raw_input("Enter the Product Code to add: ")
+			product_name = raw_input("Enter the Product's Name: ")
+			product_price = raw_input("Enter the Product's Price: ")
+
+			product.add_product(product_code, product_name, product_price)
 
 			product.get_products()
 		else:
