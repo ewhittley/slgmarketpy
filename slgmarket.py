@@ -122,6 +122,15 @@ class BasketItem(object):
 		except ValueError, e:
 			print("No Basket Items")
 
+	def destroy_basket_items(self, product=None):
+		with open('basketitems.json', 'r+') as basketitems_file:
+			basketitems = json.load(basketitems_file)
+			del basketitems['basketitems'][:]
+			
+			basketitems_file.seek(0)
+			json.dump(basketitems, basketitems_file)
+			basketitems_file.truncate()
+
 
 def add_product_to_basket(product_code):
 	product = Product()
@@ -152,7 +161,23 @@ if __name__ == "__main__":
 
 	# product.get_products('CH1')
 
-	add_product_to_basket('AP1')
+	# add_product_to_basket('AP1')
+
+	while True:
+		action = raw_input("Type add.basket(CODE) or add.product or stop: ")
+		if action == 'stop':
+			basketitem.destroy_basket_items()
+			break
+		elif action == 'add.basket':
+			add_product_to_basket('AP1')
+
+			basketitem.get_basket_items()
+		elif action == 'add.product':
+			product.add_product(code, name, price)
+
+			product.get_products()
+		else:
+			print("That action is not valid.")
 
 	"""action = raw_input("What would you like to do?\n- Add Product\n- Add Basket Item\n")
 
