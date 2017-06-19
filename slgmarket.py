@@ -129,16 +129,48 @@ def add_product_to_basket(product_code):
 	discount = Discount()
 	basketitem = BasketItem()
 
+	# get product info to add to basket item
 	product_to_add = product.get_products(product_code)
 	print("Adding to basket: {product}".format(product=product_to_add))
 
-	basketitem.add_basket_item(product_to_add['code'], None, product_to_add['price'])
+	# add product to basket
+	basketitem.add_basket_item(product_code, None, product_to_add['price'])
+	current_basket_items = basketitem.get_basket_items()
 
-	discount_to_add = discount.get_discounts(product_to_add['code'])
-	print("Adding Discount: {discount}".format(discount=discount_to_add))
+	# get available discounts that match the product we just added
+	available_discounts = discount.get_discounts(product_code)
+	print("Available Discounts: {discounts}".format(discounts=available_discounts))
+	
+	# find total number of same products in basket now
+	# used to match against discount quantity
+	basket_matches = []
 
-	# basket_items = basketitem.get_basket_items()
-	# discounts = get_discounts()
+	for item in current_basket_items.values()[0]:
+		if item['product_code'] == product_code:
+			basket_matches.append(item)
+
+	basket_matches_quantity = len(basket_matches)
+	
+	# check if discounts already exist if there is a limit on them
+	basket_item_discounts = []
+
+	for discount in available_discounts:
+		for item in current_basket_items.values()[0]:
+			if item['discount_code'] == discount['code']:
+				basket_item_discounts.append(discount)
+
+	existing_discounts = len(basket_item_discounts)
+
+	# add the discount to the basket
+	for discount in available_discounts:
+		if discount['limit'] > existing_discounts:
+			if discount['from_quantity'] < (basket_matches_quantity - existing_discounts):
+				if discount['amount'] is None:
+					basket_discount_amount = product_to_add['price'] * discount['to_quantity']
+
+					basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
+				else:
+					basketitem.add_basket_item(None, discount['code'], discount['amount'])
 
 
 if __name__ == "__main__":
@@ -146,7 +178,7 @@ if __name__ == "__main__":
 	discount = Discount()
 	basketitem = BasketItem()
 
-	help_message = "COMMANDS: \n- basket.add\n- product.add\n- help\n- stop"
+	help_message = "COMMANDS: \nb = basket, p = product\n- b.add\n- p.add\n- help\n- stop"
 	print(help_message)
 
 	while True:
@@ -156,14 +188,14 @@ if __name__ == "__main__":
 			break
 		elif action == 'help':
 			print(help_message)
-		elif "basket.add" in action:
+		elif "b.add" in action:
 			product_code = raw_input("Enter the Product Code to scan: ")
 			
 			add_product_to_basket(product_code)
 
 			basket_items = basketitem.get_basket_items()
 			print("Basket Items: {basket_items}".format(basket_items=basket_items))
-		elif "product.add" in action:
+		elif "p.add" in action:
 			product_code = raw_input("Enter the Product Code to add: ")
 			product_name = raw_input("Enter the Product's Name: ")
 			product_price = raw_input("Enter the Product's Price: ")
