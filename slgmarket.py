@@ -131,7 +131,7 @@ def add_product_to_basket(product_code):
 
 	# get product info to add to basket item
 	product_to_add = product.get_products(product_code)
-	print("Adding to basket: {product}".format(product=product_to_add))
+	# print("Adding to basket: {product}".format(product=product_to_add))
 
 	# add product to basket
 	basketitem.add_basket_item(product_code, None, product_to_add['price'])
@@ -139,7 +139,7 @@ def add_product_to_basket(product_code):
 
 	# get available discounts that match the product we just added
 	available_discounts = discount.get_discounts(product_code)
-	print("Available Discounts: {discounts}".format(discounts=available_discounts))
+	# print("Available Discounts: {discounts}".format(discounts=available_discounts))
 	
 	# find total number of same products in basket now
 	# used to match against discount quantity
@@ -163,10 +163,12 @@ def add_product_to_basket(product_code):
 
 	# add the discount to the basket
 	for discount in available_discounts:
-		if discount['limit'] > existing_discounts:
-			if discount['from_quantity'] < (basket_matches_quantity - existing_discounts):
+		if (int(discount['limit']) > existing_discounts) or discount['limit'] is None:
+			existing_discounts_compare = (int(discount['from_quantity']) + int(discount['to_quantity'])) * existing_discounts
+			basket_items_compare = basket_matches_quantity - (int(discount['from_quantity']) + int(discount['to_quantity']))
+			if existing_discounts_compare == basket_items_compare:
 				if discount['amount'] is None:
-					basket_discount_amount = product_to_add['price'] * discount['to_quantity']
+					basket_discount_amount = float(product_to_add['price']) * int(discount['to_quantity'])
 
 					basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
 				else:
