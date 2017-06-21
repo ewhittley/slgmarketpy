@@ -167,6 +167,37 @@ def add_product_to_basket(product_code):
 	apply_available_discounts(product_to_add, available_discounts, current_discounts, current_basket_quantity)
 
 
+def checkout_print(basket_items):
+	header = "Item             Price  \n------------------------"
+
+	print_list = []
+
+	print_list.append(header)
+
+	for item in basket_items:
+		if item['product_code']:
+			price_spacing = " " * (11 - len(str(item['amount'])))
+			item_line = "{code}         {spacing}{amount}".format(code=item['product_code'], 
+																	spacing=price_spacing,
+																	amount=item['amount'])
+			print_list.append(item_line)
+		elif item['discount_code']:
+			print(item['amount'])
+			price_spacing = " " * (10 - len(str(item['amount'])))
+			item_line = "      {discount}  {spacing}-{amount}".format(discount=item['discount_code'],
+																		spacing=price_spacing,
+																		amount=item['amount'])
+			print_list.append(item_line)
+		else:
+			# something weird here, we have a product and
+			# discount on the same line
+			raise
+
+	for print_line in print_list:
+		print(print_line)
+
+
+
 if __name__ == "__main__":
 	product = Product()
 	discount = Discount()
@@ -174,6 +205,9 @@ if __name__ == "__main__":
 
 	help_message = "COMMANDS: \nb = basket, p = product\n- b.add\n- p.add\n- help\n- stop"
 	print(help_message)
+
+	basket_items = basketitem.get_basket_items()
+	checkout_print(basket_items)
 
 	while True:
 		action = raw_input("action: ")
@@ -188,7 +222,7 @@ if __name__ == "__main__":
 			add_product_to_basket(product_code)
 
 			basket_items = basketitem.get_basket_items()
-			print("Basket Items: {basket_items}".format(basket_items=basket_items))
+			checkout_print(basket_items)
 		elif "p.add" in action:
 			product_code = raw_input("Enter the Product Code to add: ")
 			product_name = raw_input("Enter the Product's Name: ")
@@ -199,3 +233,5 @@ if __name__ == "__main__":
 			product.get_products()
 		else:
 			print("That action is not valid.")
+			basket_items = basketitem.get_basket_items()
+			checkout_print(basket_items)
