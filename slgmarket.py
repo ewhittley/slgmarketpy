@@ -62,33 +62,9 @@ class Discount(object):
 
 
 	def get_discounts(self, product_code=None):
-		"""discounts = json_helper.get_list('discounts.json', 'from_product', product_code)
+		discounts = json_helper.get_list('discounts.json', 'from_product', product_code)
 
-		return discounts"""
-		with open('discounts.json', 'r') as discounts_file:
-			discounts = json.load(discounts_file)
-
-			from_discount = []
-			to_discount = []
-
-			if product_code is not None:
-				for discount in discounts.values()[0]:
-					if discount['from_product'] == product_code:
-						from_discount.append(discount)
-					if discount['to_product'] == product_code:
-						to_discount.append(discount)
-
-				# need to handle duplicate returns on discounts.
-				# example: BOGO
-				if from_discount == to_discount:
-					return from_discount
-				else:
-					if from_discount:
-						return from_discount
-					elif to_discount:
-						return to_discount
-			else:
-				print(discounts)
+		return discounts
 
 
 class BasketItem(object):
@@ -157,7 +133,8 @@ def add_product_to_basket(product_code):
 	basketitem = BasketItem()
 
 	# get product info to add to basket item
-	product_to_add = product.get_products(product_code)
+	# take the first product returned since we should only return one
+	product_to_add = product.get_products(product_code)[0]
 
 	# add product to basket
 	basketitem.add_basket_item(product_code, None, product_to_add['price'])
@@ -165,13 +142,12 @@ def add_product_to_basket(product_code):
 
 	# get available discounts that match the product we just added
 	available_discounts = discount.get_discounts(product_code)
-	print(available_discounts)
 
 	# find total number of same products in basket now
 	# used to match against discount quantity
 	basket_matches = []
 
-	for item in current_basket_items.values()[0]:
+	for item in current_basket_items:
 		if item['product_code'] == product_code:
 			basket_matches.append(item)
 
@@ -181,7 +157,7 @@ def add_product_to_basket(product_code):
 	basket_item_discounts = []
 
 	for discount in available_discounts:
-		for item in current_basket_items.values()[0]:
+		for item in current_basket_items:
 			if item['discount_code'] == discount['code']:
 				basket_item_discounts.append(discount)
 
