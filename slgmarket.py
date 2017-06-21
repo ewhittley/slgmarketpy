@@ -1,5 +1,6 @@
 import json
 import json_helper
+import unittest
 
 
 class Product(object):
@@ -172,6 +173,7 @@ def total_basket(basket_items):
 
 	return basket_sum
 
+
 def checkout_print(basket_items):
 	print_list = []
 
@@ -212,6 +214,7 @@ def checkout_print(basket_items):
 
 	for print_line in print_list:
 		print(print_line)
+
 
 
 if __name__ == "__main__":
