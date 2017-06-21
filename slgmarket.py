@@ -1,4 +1,3 @@
-import errno
 import json
 import json_helper
 
@@ -120,11 +119,12 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
 				# either add the price of the discounted item or a specific defined
 				# discount amount if it is declared
 				if discount['amount'] is None:
-					basket_discount_amount = float(product['price']) * to_qty
+					basket_discount_amount = str(-1 * float(product['price']) * to_qty)
 
 					basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
 				else:
-					basketitem.add_basket_item(None, discount['code'], discount['amount'])
+					basket_discount_amount = str(-1 * float(discount['amount']))
+					basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
 
 
 def add_product_to_basket(product_code):
@@ -167,35 +167,51 @@ def add_product_to_basket(product_code):
 	apply_available_discounts(product_to_add, available_discounts, current_discounts, current_basket_quantity)
 
 
-def checkout_print(basket_items):
-	header = "Item             Price  \n------------------------"
+def total_basket(basket_items):
+	basket_sum = sum(float(item['amount']) for item in basket_items)
 
+	return basket_sum
+
+def checkout_print(basket_items):
 	print_list = []
+
+	item_header = "Item".ljust(3)
+	discount_header = " " * 4
+	price_header = "Price".rjust(16)
+	
+	header = "{item}{discount}{price}".format(item=item_header,
+												discount=discount_header,
+												price=price_header)
 
 	print_list.append(header)
 
+	line_separater = "-" * 24
+	print_list.append(line_separater)
+
 	for item in basket_items:
+		amount = "${:,.2f}".format(float(item['amount'])).rjust(12)
 		if item['product_code']:
-			price_spacing = " " * (11 - len(str(item['amount'])))
-			item_line = "{code}         {spacing}{amount}".format(code=item['product_code'], 
-																	spacing=price_spacing,
-																	amount=item['amount'])
+			item_line = "{code}         {amount}".format(code=item['product_code'], 
+															amount=amount)
 			print_list.append(item_line)
 		elif item['discount_code']:
-			print(item['amount'])
-			price_spacing = " " * (10 - len(str(item['amount'])))
-			item_line = "      {discount}  {spacing}-{amount}".format(discount=item['discount_code'],
-																		spacing=price_spacing,
-																		amount=item['amount'])
+			item_line = "      {discount}  {amount}".format(discount=item['discount_code'],
+															amount=amount)
 			print_list.append(item_line)
 		else:
 			# something weird here, we have a product and
 			# discount on the same line
 			raise
 
+	print_list.append(line_separater)
+
+	total = "${:,.2f}".format(total_basket(basket_items)).rjust(24)
+	footer = "{total}".format(total=total)
+
+	print_list.append(footer)
+
 	for print_line in print_list:
 		print(print_line)
-
 
 
 if __name__ == "__main__":
