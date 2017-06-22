@@ -62,7 +62,7 @@ class Discount(object):
 
 
 	def get_discounts(self, product_code=None):
-		discounts = json_helper.get_list('discounts.json', 'from_product', product_code)
+		discounts = json_helper.get_list('discounts.json', 'to_product', product_code)
 
 		return discounts
 
@@ -104,9 +104,15 @@ class BasketItem(object):
 
 
 def apply_available_discounts(product, available_discounts, current_discounts, current_basket_quantity):
+	basketitem = BasketItem()
+
 	for discount in available_discounts:
 		# set limit to infinite if we don't find one
 		limit = int(discount['limit']) if discount['limit'] else float('inf')
+
+		print("limit: {limit}".format(limit=limit))
+		print("current: {current}".format(current=current_discounts))
+
 		if (limit > current_discounts):
 			from_qty = int(discount['from_quantity'])
 			to_qty = int(discount['to_quantity'])
@@ -114,7 +120,9 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
 			# magic math to compare discount defined quantities to existing
 			# basket quantities and determine if a discount should be applied
 			compare_existing = (from_qty + to_qty) * current_discounts
+			print("{existing}".format(existing=compare_existing))
 			compare_basket = current_basket_quantity - (from_qty + to_qty)
+			print("{basket}".format(basket=compare_basket))
 
 			if compare_existing == compare_basket:
 				# either add the price of the discounted item or a specific defined
