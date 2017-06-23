@@ -152,8 +152,11 @@ def add_product_to_basket(product_code):
     basket_matches = []
 
     for item in current_basket_items:
-        if item['product_code'] == product_code:
-            basket_matches.append(item)
+        for discount in available_discounts:
+            if item['product_code'] == product_code:
+                basket_matches.append(item)
+            elif item['product_code'] == discount['from_product']:
+                basket_matches.append(item)
 
     current_basket_quantity = len(basket_matches)
     
