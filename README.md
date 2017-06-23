@@ -39,8 +39,9 @@ python test_slgmarket.py
 
 ## Current
 
-There is currently 3 passing tests and 1 failing test. The failing test is for the CHMK discount. 
-I need to rewrite the current_basket_quantity to include products for the from quantity. The reason the others pass right now is because the from and to products on the discount are the same product.
+* All Tests are passing. 
+* You can add products to a basket
+* You can add a product to the application
 
 ## Future
 
