@@ -34,14 +34,5 @@ def get_list(file_name, key=None, key_compare=None):
                     final_list.append(list_item)
 
             return final_list
-            """
-            if key is not None:
-                for list_item in json_list.values()[0]:
-                    if list_item[key] == key_compare:
-                        # if we do return it
-                        return list_item
-            else:
-                # if we don't have a match, return all items
-                return json_list"""
     except ValueError, e:
         print("No Items")

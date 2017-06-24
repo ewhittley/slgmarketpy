@@ -11,10 +11,10 @@ class Product(object):
         self.price = price
 
         product_data = {
-                        'code' : self.code,
-                        'name' : self.name,
-                        'price' : self.price
-                        }
+            'code' : self.code,
+            'name' : self.name,
+            'price' : self.price
+            }
 
         json_helper.write_list('products.json', 'products', product_data)
 
@@ -31,8 +31,8 @@ class Product(object):
 
 class Discount(object):
 
-    def add_discount(self, code, description, limit=None, 
-                    from_product=None, from_quantity=None, 
+    def add_discount(self, code, description, limit=None,
+                    from_product=None, from_quantity=None,
                     to_product=None, to_quantity=None, amount=None):
         self.code = code
         self.description = description
@@ -44,15 +44,15 @@ class Discount(object):
         self.amount = amount
 
         discount_data = {
-                            'code' : self.code,
-                            'description' : self.description,
-                            'limit' : self.limit,
-                            'from_product' : self.from_product,
-                            'from_quantity' : self.from_quantity,
-                            'to_product' : self.to_product,
-                            'to_quantity' : self.to_quantity,
-                            'amount' : self.amount
-                            }
+            'code' : self.code,
+            'description' : self.description,
+            'limit' : self.limit,
+            'from_product' : self.from_product,
+            'from_quantity' : self.from_quantity,
+            'to_product' : self.to_product,
+            'to_quantity' : self.to_quantity,
+            'amount' : self.amount
+            }
 
         json_helper.write_list('discounts.json', 'discounts', discount_data)
 
@@ -69,17 +69,17 @@ class Discount(object):
 
 class BasketItem(object):
 
-    def add_basket_item(self, product_code=None, 
+    def add_basket_item(self, product_code=None,
                         discount_code=None, amount=None):
         self.product_code = product_code
         self.discount_code = discount_code
         self.amount = amount
 
         basketitem_data = {
-                            'product_code' : self.product_code,
-                            'discount_code' : self.discount_code,
-                            'amount' : self.amount
-                            }
+            'product_code' : self.product_code,
+            'discount_code' : self.discount_code,
+            'amount' : self.amount
+            }
 
         json_helper.write_list('basketitems.json', 'basketitems', basketitem_data)
 
@@ -97,7 +97,7 @@ class BasketItem(object):
         with open('basketitems.json', 'r+') as basketitems_file:
             basketitems = json.load(basketitems_file)
             del basketitems['basketitems'][:]
-            
+
             basketitems_file.seek(0)
             json.dump(basketitems, basketitems_file)
             basketitems_file.truncate()
@@ -118,7 +118,7 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
             # basket quantities and determine if a discount should be applied
             compare_existing = (from_qty + to_qty) * current_discounts
             compare_basket = current_basket_quantity - (from_qty + to_qty)
-            
+
             if compare_existing == compare_basket:
                 # either add the price of the discounted item or a specific defined
                 # discount amount if it is declared
@@ -159,7 +159,7 @@ def add_product_to_basket(product_code):
                 basket_matches.append(item)
 
     current_basket_quantity = len(basket_matches)
-    
+
     # check if discounts already exist if there is a limit on them
     basket_item_discounts = []
 
@@ -186,7 +186,7 @@ def checkout_print(basket_items):
     item_header = "Item".ljust(3)
     discount_header = " " * 4
     price_header = "Price".rjust(16)
-    
+
     header = "{item}{discount}{price}".format(item=item_header,
                                                 discount=discount_header,
                                                 price=price_header)
@@ -199,7 +199,7 @@ def checkout_print(basket_items):
     for item in basket_items:
         amount = "${:,.2f}".format(float(item['amount'])).rjust(12)
         if item['product_code']:
-            item_line = "{code}         {amount}".format(code=item['product_code'], 
+            item_line = "{code}         {amount}".format(code=item['product_code'],
                                                             amount=amount)
             print_list.append(item_line)
         elif item['discount_code']:
@@ -243,7 +243,7 @@ if __name__ == "__main__":
             print(help_message)
         elif "b.add" in action:
             product_code = raw_input("Enter the Product Code to scan: ")
-            
+
             add_product_to_basket(product_code)
 
             basket_items = basketitem.get_basket_items()
