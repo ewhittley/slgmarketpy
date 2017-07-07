@@ -3,6 +3,14 @@ import slgdiscounts
 import slgbasketitems
 
 
+def set_basket_discount_amount(product, discount, to_qty):
+    if discount['amount'] is None:
+        basket_discount_amount = str(-1 * float(product['price']) * to_qty)
+    else:
+        basket_discount_amount = str(-1 * float(discount['amount']))
+
+    return basket_discount_amount
+
 def apply_available_discounts(product, available_discounts,
                               current_discounts, current_basket_quantity):
     basketitem = slgbasketitems.BasketItem()
@@ -23,13 +31,16 @@ def apply_available_discounts(product, available_discounts,
             if compare_existing == compare_basket:
                 # either add the price of the discounted item or a specific
                 # defined discount amount if it is declared
-                if discount['amount'] is None:
+                discount_amount = set_basket_discount_amount(product, discount, to_qty)
+
+                basketitem.add_basket_item(None, discount['code'], discount_amount)
+                """if discount['amount'] is None:
                     basket_discount_amount = str(-1 * float(product['price']) * to_qty)
 
                     basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
                 else:
                     basket_discount_amount = str(-1 * float(discount['amount']))
-                    basketitem.add_basket_item(None, discount['code'], basket_discount_amount)
+                    basketitem.add_basket_item(None, discount['code'], basket_discount_amount)"""
 
 
 def add_product_to_basket(product_code):
