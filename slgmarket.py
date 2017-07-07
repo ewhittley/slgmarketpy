@@ -3,42 +3,10 @@ import json_helper
 import unittest
 import slgproducts
 import slgdiscounts
+import slgbasketitems
 
 
-class BasketItem(object):
 
-    def add_basket_item(self, product_code=None,
-                        discount_code=None, amount=None):
-        self.product_code = product_code
-        self.discount_code = discount_code
-        self.amount = amount
-
-        basketitem_data = {
-            'product_code' : self.product_code,
-            'discount_code' : self.discount_code,
-            'amount' : self.amount
-            }
-
-        json_helper.write_list('basketitems.json', 'basketitems', basketitem_data)
-
-
-    def update_basket_item(self):
-        pass
-
-
-    def get_basket_items(self, product=None):
-        basket_items = json_helper.get_list('basketitems.json')
-
-        return basket_items
-
-    def destroy_basket_items(self, product=None):
-        with open('basketitems.json', 'r+') as basketitems_file:
-            basketitems = json.load(basketitems_file)
-            del basketitems['basketitems'][:]
-
-            basketitems_file.seek(0)
-            json.dump(basketitems, basketitems_file)
-            basketitems_file.truncate()
 
 
 def apply_available_discounts(product, available_discounts, current_discounts, current_basket_quantity):
@@ -72,7 +40,7 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
 def add_product_to_basket(product_code):
     product = slgproducts.Product()
     discount = slgdiscounts.Discount()
-    basketitem = BasketItem()
+    basketitem = slgbasketitems.BasketItem()
 
     # get product info to add to basket item
     # take the first product returned since we should only return one
@@ -164,7 +132,7 @@ def checkout_print(basket_items):
 if __name__ == "__main__":
     product = slgproducts.Product()
     discount = slgdiscounts.Discount()
-    basketitem = BasketItem()
+    basketitem = slgbasketitems.BasketItem()
 
     help_message = "COMMANDS: \nb = basket, p = product\n- b.add\n- p.add\n- help\n- stop"
     print(help_message)
