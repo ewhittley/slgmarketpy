@@ -5,7 +5,7 @@ import slgbasketitems
 
 def apply_available_discounts(product, available_discounts,
                               current_discounts, current_basket_quantity):
-    basketitem = BasketItem()
+    basketitem = slgbasketitems.BasketItem()
 
     for discount in available_discounts:
         # set limit to infinite if we don't find one
