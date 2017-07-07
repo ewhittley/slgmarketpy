@@ -11,17 +11,15 @@ class BasketItem(object):
         self.amount = amount
 
         basketitem_data = {
-            'product_code' : self.product_code,
-            'discount_code' : self.discount_code,
-            'amount' : self.amount
+            'product_code': self.product_code,
+            'discount_code': self.discount_code,
+            'amount': self.amount
             }
 
         json_helper.write_list('basketitems.json', 'basketitems', basketitem_data)
 
-
     def update_basket_item(self):
         pass
-
 
     def get_basket_items(self, product=None):
         basket_items = json_helper.get_list('basketitems.json')

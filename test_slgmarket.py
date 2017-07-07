@@ -21,7 +21,6 @@ class BasketItemsTester(unittest.TestCase):
 
         self.assertEqual(self.total, 20.34)
 
-
     def test_no_discount(self):
         self.basketitem = slgmarket.BasketItem()
 
@@ -39,7 +38,6 @@ class BasketItemsTester(unittest.TestCase):
 
         self.assertEqual(self.total, 10.75)
 
-
     def test_bogo_discount(self):
         self.basketitem = slgmarket.BasketItem()
 
@@ -56,7 +54,6 @@ class BasketItemsTester(unittest.TestCase):
         self.basketitem.destroy_basket_items()
 
         self.assertEqual(self.total, 11.23)
-
 
     def test_appl_discount(self):
         self.basketitem = slgmarket.BasketItem()

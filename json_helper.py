@@ -17,6 +17,7 @@ def write_list(file_name, key, data):
         # truncate old dict
         json_file.truncate()
 
+
 def get_list(file_name, key=None, key_compare=None):
     try:
         with open(file_name, 'r') as json_file:

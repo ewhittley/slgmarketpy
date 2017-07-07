@@ -1,15 +1,10 @@
-import json
-import json_helper
-import unittest
 import slgproducts
 import slgdiscounts
 import slgbasketitems
 
 
-
-
-
-def apply_available_discounts(product, available_discounts, current_discounts, current_basket_quantity):
+def apply_available_discounts(product, available_discounts,
+                              current_discounts, current_basket_quantity):
     basketitem = BasketItem()
 
     for discount in available_discounts:
@@ -26,8 +21,8 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
             compare_basket = current_basket_quantity - (from_qty + to_qty)
 
             if compare_existing == compare_basket:
-                # either add the price of the discounted item or a specific defined
-                # discount amount if it is declared
+                # either add the price of the discounted item or a specific
+                # defined discount amount if it is declared
                 if discount['amount'] is None:
                     basket_discount_amount = str(-1 * float(product['price']) * to_qty)
 
@@ -94,8 +89,8 @@ def checkout_print(basket_items):
     price_header = "Price".rjust(16)
 
     header = "{item}{discount}{price}".format(item=item_header,
-                                                discount=discount_header,
-                                                price=price_header)
+                                              discount=discount_header,
+                                              price=price_header)
 
     print_list.append(header)
 
@@ -106,7 +101,7 @@ def checkout_print(basket_items):
         amount = "${:,.2f}".format(float(item['amount'])).rjust(12)
         if item['product_code']:
             item_line = "{code}         {amount}".format(code=item['product_code'],
-                                                            amount=amount)
+                                                         amount=amount)
             print_list.append(item_line)
         elif item['discount_code']:
             item_line = "      {discount}  {amount}".format(discount=item['discount_code'],
@@ -126,7 +121,6 @@ def checkout_print(basket_items):
 
     for print_line in print_list:
         print(print_line)
-
 
 
 if __name__ == "__main__":
