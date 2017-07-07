@@ -1,32 +1,7 @@
 import json
 import json_helper
 import unittest
-
-
-class Product(object):
-
-    def add_product(self, code, name, price):
-        self.code = code
-        self.name = name
-        self.price = price
-
-        product_data = {
-            'code' : self.code,
-            'name' : self.name,
-            'price' : self.price
-            }
-
-        json_helper.write_list('products.json', 'products', product_data)
-
-
-    def update_product(self, code, name=None, price=None):
-        pass
-
-
-    def get_products(self, code=None):
-        products = json_helper.get_list('products.json', 'code', code)
-
-        return products
+import slgproducts
 
 
 class Discount(object):
@@ -132,7 +107,7 @@ def apply_available_discounts(product, available_discounts, current_discounts, c
 
 
 def add_product_to_basket(product_code):
-    product = Product()
+    product = slgproducts.Product()
     discount = Discount()
     basketitem = BasketItem()
 
@@ -224,7 +199,7 @@ def checkout_print(basket_items):
 
 
 if __name__ == "__main__":
-    product = Product()
+    product = slgproducts.Product()
     discount = Discount()
     basketitem = BasketItem()
 
