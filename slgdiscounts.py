@@ -20,7 +20,8 @@ class Discount(object):
         json_helper.write_list('discounts.json', 'discounts', discount_data)
 
     def get_discounts(self, product_code=None):
-        discounts = json_helper.get_list('discounts.json', 'to_product',
+        discounts = json_helper.get_list('discounts.json',
+                                         'to_product',
                                          product_code)
 
         return discounts
