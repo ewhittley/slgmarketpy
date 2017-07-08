@@ -86,18 +86,6 @@ def add_product_to_basket(product_code):
     # get available discounts that match the product we just added
     available_discounts = discount.get_discounts(product_code)
 
-    # find total number of same products in basket now
-    # used to match against discount quantity
-    """basket_matches = []
-
-    for item in current_basket_items:
-        for discount in available_discounts:
-            if item['product_code'] == product_code:
-                basket_matches.append(item)
-            elif item['product_code'] == discount['from_product']:
-                basket_matches.append(item)
-
-    current_basket_quantity = len(basket_matches)"""
     current_qty = get_basket_qty(current_basket_items, available_discounts, product_code)
 
     # check if discounts already exist if there is a limit on them
@@ -120,58 +108,17 @@ def total_basket(basket_items):
     return basket_sum
 
 
-def checkout_print(basket_items):
-    print_list = []
-
-    item_header = "Item".ljust(3)
-    discount_header = " " * 4
-    price_header = "Price".rjust(16)
-
-    header = "{item}{discount}{price}".format(item=item_header,
-                                              discount=discount_header,
-                                              price=price_header)
-
-    print_list.append(header)
-
-    line_separater = "-" * 24
-    print_list.append(line_separater)
-
-    for item in basket_items:
-        amount = "${:,.2f}".format(float(item['amount'])).rjust(12)
-        if item['product_code']:
-            item_line = "{code}         {amount}".format(code=item['product_code'],
-                                                         amount=amount)
-            print_list.append(item_line)
-        elif item['discount_code']:
-            item_line = "      {discount}  {amount}".format(discount=item['discount_code'],
-                                                            amount=amount)
-            print_list.append(item_line)
-        else:
-            # something weird here, we have a product and
-            # discount on the same line
-            raise
-
-    print_list.append(line_separater)
-
-    total = "${:,.2f}".format(total_basket(basket_items)).rjust(24)
-    footer = "{total}".format(total=total)
-
-    print_list.append(footer)
-
-    for print_line in print_list:
-        print(print_line)
-
-
 if __name__ == "__main__":
     product = slgproducts.Product()
     discount = slgdiscounts.Discount()
     basketitem = slgbasketitems.BasketItem()
+    printitems = slgprinter.Printer()
 
     help_message = "COMMANDS: \nb = basket, p = product\n- b.add\n- p.add\n- help\n- stop"
     print(help_message)
 
     basket_items = basketitem.get_basket_items()
-    checkout_print(basket_items)
+    printitems.print_basket(basket_items, total_basket(basket_items))
 
     while True:
         action = raw_input("action: ")
@@ -186,7 +133,7 @@ if __name__ == "__main__":
             add_product_to_basket(product_code)
 
             basket_items = basketitem.get_basket_items()
-            checkout_print(basket_items)
+            printitems.print_basket(basket_items, total_basket(basket_items))
         elif "p.add" in action:
             product_code = raw_input("Enter the Product Code to add: ")
             product_name = raw_input("Enter the Product's Name: ")
@@ -198,4 +145,4 @@ if __name__ == "__main__":
         else:
             print("That action is not valid.")
             basket_items = basketitem.get_basket_items()
-            checkout_print(basket_items)
+            printitems.print_basket(basket_items, total_basket(basket_items))
