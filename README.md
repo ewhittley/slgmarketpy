@@ -36,15 +36,3 @@ You can run tests with the following in terminal:
 ```
 python test_slgmarket.py
 ```
-
-## Current
-
-* All Tests are passing. 
-* You can add products to a basket
-* You can add a product to the application
-
-## Future
-
-* The product add needs to be cleaned up
-* Add the ability to update products and discounts
-* Add the ability to destroy products and discounts

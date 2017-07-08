@@ -22,12 +22,10 @@ class Printer(object):
                 item_line = "{code}         {amount}".format(code=item['product_code'],
                                                              amount=amount)
                 return item_line
-                # print_list.append(item_line)
             elif item['discount_code']:
                 item_line = "      {discount}  {amount}".format(discount=item['discount_code'],
                                                                 amount=amount)
                 return item_line
-                # print_list.append(item_line)
             else:
                 # something weird here, we have a product and
                 # discount on the same line

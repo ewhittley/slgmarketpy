@@ -86,7 +86,9 @@ def add_product_to_basket(product_code):
     # get available discounts that match the product we just added
     available_discounts = discount.get_discounts(product_code)
 
-    current_qty = get_basket_qty(current_basket_items, available_discounts, product_code)
+    current_qty = get_basket_qty(current_basket_items,
+                                 available_discounts,
+                                 product_code)
 
     # check if discounts already exist if there is a limit on them
     basket_item_discounts = []
@@ -99,7 +101,10 @@ def add_product_to_basket(product_code):
     current_discounts = len(basket_item_discounts)
 
     # add the discount to the basket
-    apply_available_discounts(product_to_add, available_discounts, current_discounts, current_qty)
+    apply_available_discounts(product_to_add,
+                              available_discounts,
+                              current_discounts,
+                              current_qty)
 
 
 def total_basket(basket_items):
@@ -114,7 +119,8 @@ if __name__ == "__main__":
     basketitem = slgbasketitems.BasketItem()
     printitems = slgprinter.Printer()
 
-    help_message = "COMMANDS: \nb = basket, p = product\n- b.add\n- p.add\n- help\n- stop"
+    help_message = "COMMANDS: \nb = basket, p = product\n" \
+                   "- b.add\n- p.add\n- help\n- stop"
     print(help_message)
 
     basket_items = basketitem.get_basket_items()
