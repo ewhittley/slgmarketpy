@@ -53,6 +53,23 @@ def apply_available_discounts(product,
                 basketitem.add_basket_item(None, discount['code'], add_discount)
 
 
+def get_basket_qty(current_basket_items, available_discounts, product_code):
+    # find total number of same products in basket now
+    # used to match against discount quantity
+    basket_matches = []
+
+    for item in current_basket_items:
+        for discount in available_discounts:
+            if item['product_code'] == product_code:
+                basket_matches.append(item)
+            elif item['product_code'] == discount['from_product']:
+                basket_matches.append(item)
+
+    current_basket_quantity = len(basket_matches)
+
+    return current_basket_quantity
+
+
 def add_product_to_basket(product_code):
     product = slgproducts.Product()
     discount = slgdiscounts.Discount()
@@ -71,7 +88,7 @@ def add_product_to_basket(product_code):
 
     # find total number of same products in basket now
     # used to match against discount quantity
-    basket_matches = []
+    """basket_matches = []
 
     for item in current_basket_items:
         for discount in available_discounts:
@@ -80,7 +97,8 @@ def add_product_to_basket(product_code):
             elif item['product_code'] == discount['from_product']:
                 basket_matches.append(item)
 
-    current_basket_quantity = len(basket_matches)
+    current_basket_quantity = len(basket_matches)"""
+    current_qty = get_basket_qty(current_basket_items, available_discounts, product_code)
 
     # check if discounts already exist if there is a limit on them
     basket_item_discounts = []
@@ -93,7 +111,7 @@ def add_product_to_basket(product_code):
     current_discounts = len(basket_item_discounts)
 
     # add the discount to the basket
-    apply_available_discounts(product_to_add, available_discounts, current_discounts, current_basket_quantity)
+    apply_available_discounts(product_to_add, available_discounts, current_discounts, current_qty)
 
 
 def total_basket(basket_items):
