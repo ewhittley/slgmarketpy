@@ -12,8 +12,30 @@ def set_basket_discount_amount(product, discount, to_qty):
     return basket_discount_amount
 
 
-def apply_available_discounts(product, available_discounts,
-                              current_discounts, current_basket_quantity):
+def compare_existing_discounts(product,
+                               discount,
+                               current_discounts,
+                               current_qty):
+    from_qty = int(discount['from_quantity'])
+    to_qty = int(discount['to_quantity'])
+
+    # magic math to compare discount defined quantities to existing
+    # basket quantities and determine if a discount should be applied
+    compare_existing = (from_qty + to_qty) * current_discounts
+    compare_basket = current_qty - (from_qty + to_qty)
+
+    if compare_existing == compare_basket:
+        # either add the price of the discounted item or a specific
+        # defined discount amount if it is declared
+        discount_amount = set_basket_discount_amount(product, discount, to_qty)
+
+        return discount_amount
+
+
+def apply_available_discounts(product,
+                              available_discounts,
+                              current_discounts,
+                              current_qty):
     basketitem = slgbasketitems.BasketItem()
 
     for discount in available_discounts:
@@ -21,20 +43,13 @@ def apply_available_discounts(product, available_discounts,
         limit = int(discount['limit']) if discount['limit'] else float('inf')
 
         if (limit > current_discounts):
-            from_qty = int(discount['from_quantity'])
-            to_qty = int(discount['to_quantity'])
+            add_discount = compare_existing_discounts(product,
+                                                      discount,
+                                                      current_discounts,
+                                                      current_qty)
 
-            # magic math to compare discount defined quantities to existing
-            # basket quantities and determine if a discount should be applied
-            compare_existing = (from_qty + to_qty) * current_discounts
-            compare_basket = current_basket_quantity - (from_qty + to_qty)
-
-            if compare_existing == compare_basket:
-                # either add the price of the discounted item or a specific
-                # defined discount amount if it is declared
-                discount_amount = set_basket_discount_amount(product, discount, to_qty)
-
-                basketitem.add_basket_item(None, discount['code'], discount_amount)
+            if add_discount:
+                basketitem.add_basket_item(None, discount['code'], add_discount)
 
 
 def add_product_to_basket(product_code):
