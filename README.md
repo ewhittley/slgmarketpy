@@ -10,7 +10,19 @@ This is a programming challenge to create a Farmer's market ordering system. The
 
 ## Running
 
-From terminal run:
+Set up virtualenv
+```
+virtualenv --python=/usr/bin/python2.7
+```
+
+Activate the virtualenv
+```
+source slgmarketpy/bin/activate
+```
+
+* Note: there are no additionally required packages with this script
+
+Run the slgmarket script
 ```
 python slgmarket.py
 ```
